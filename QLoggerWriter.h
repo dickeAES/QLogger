@@ -79,10 +79,22 @@ public:
    LogLevel getLevel() const { return mLevel; }
 
    /**
+    * @brief Gets the current level threshold for printing to console.
+    * @return The level
+    */
+   LogLevel getLevelPrint() const { return mLevelPrint; }
+
+   /**
     * @brief setLogLevel Sets the log level for this destination.
     * @param level The new level threshold.
     */
    void setLogLevel(LogLevel level) { mLevel = level; }
+
+   /**
+    * @brief setLogLevel Sets the log level for this destination.
+    * @param level The new level threshold.
+    */
+   void setLogLevelPrint(LogLevel level) { mLevelPrint = level; }
 
    /**
     * @brief Gets the current max size for the log file.
@@ -153,9 +165,11 @@ private:
    LogFileDisplay mFileSuffixIfFull;
    LogMode mMode;
    LogLevel mLevel;
+   LogLevel mLevelPrint;
    int mMaxFileSize = 1024 * 1024; //! @note 1Mio
    LogMessageDisplays mMessageOptions;
    QVector<QString> mMessages;
+   QVector<QString> mMessagesPrint;
    QMutex mutex;
 
    /**
@@ -184,6 +198,13 @@ private:
     * @param message Pair of values consistent on the date and the message to be log.
     */
    void write(QVector<QString> messages);
+
+   /**
+    * @brief Print a message to the console
+    *
+    * @param messages to be printed
+    */
+   void printToConsole(QVector<QString> messages);
 };
 
 }

@@ -63,6 +63,8 @@ QLoggerWriter::QLoggerWriter(const QString &fileDestination, LogLevel level, con
 
    if (mMode == LogMode::Full || mMode == LogMode::OnlyFile)
       dir.mkpath(QStringLiteral("."));
+
+   mLevelPrint = level;
 }
 
 void QLoggerWriter::setLogMode(LogMode mode)
@@ -160,6 +162,16 @@ void QLoggerWriter::write(QVector<QString> messages)
    }
 }
 
+void QLoggerWriter::printToConsole(QVector<QString> messages) {
+    if(mMode != LogMode::OnlyFile) {
+        for (const auto &message : messages)
+           qInfo() << message;
+
+        return;
+    }
+}
+
+
 void QLoggerWriter::enqueue(const QDateTime &date, const QString &threadId, const QString &module, LogLevel level,
                             const QString &function, const QString &fileName, int line, const QString &message)
 {
@@ -220,7 +232,12 @@ void QLoggerWriter::enqueue(const QDateTime &date, const QString &threadId, cons
 
    text.append(QString::fromLatin1("\n"));
 
-   mMessages.append(text);
+   if(mLevel <= level) {
+      mMessages.append(text);
+   } else {
+      mMessagesPrint.append(text);
+   }
+
 
    if (!mIsStop)
       mQueueNotEmpty.wakeAll();
@@ -237,13 +254,16 @@ void QLoggerWriter::run()
    while (!mQuit)
    {
       decltype(mMessages) copy;
+      decltype (mMessagesPrint) copyPrint;
 
       {
          QMutexLocker locker(&mutex);
          std::swap(copy, mMessages);
+         std::swap(copyPrint, mMessagesPrint);
       }
 
       write(std::move(copy));
+      printToConsole(std::move(copyPrint));
 
       if (!mQuit)
       {
