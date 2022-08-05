@@ -83,6 +83,17 @@ public:
                        const QString &fileFolderDestination = QString(), LogMode mode = LogMode::OnlyFile,
                        LogFileDisplay fileSuffixIfFull = LogFileDisplay::DateTime,
                        LogMessageDisplays messageOptions = LogMessageDisplay::Default, bool notify = true);
+
+   /**
+    * @brief This method allows to set a individual LogLevel for printing to the console.
+    * This allows to log and print at different LogLevels with one module.
+    *
+    * @param fileDest The file name and path to print logs.
+    * @param level The maximum level allowed.
+    * @return Returns false if the module does not exist
+    */
+   bool setIndividualPrintLevel(const QString &module, LogLevel level);
+
    /**
     * @brief Clears old log files from the current storage folder.
     *

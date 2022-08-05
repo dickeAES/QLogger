@@ -108,6 +108,18 @@ void QLoggerManager::startWriter(const QString &module, QLoggerWriter *log, LogM
       log->start();
 }
 
+bool QLoggerManager::setIndividualPrintLevel(const QString &module, LogLevel level)
+{
+    bool set = false;
+
+    if(mModuleDest.contains(module)) {
+        mModuleDest[module]->setLogLevelPrint(level);
+        set = true;
+    }
+
+    return set;
+}
+
 void QLoggerManager::clearFileDestinationFolder(const QString &fileFolderDestination, int days)
 {
    QDir dir(fileFolderDestination + QStringLiteral("/logs"));
@@ -149,7 +161,7 @@ void QLoggerManager::writeAndDequeueMessages(const QString &module)
       {
          const auto level = qvariant_cast<LogLevel>(vals.at(2).toInt());
 
-         if (logWriter->getLevel() <= level)
+         if (logWriter->getLevel() <= level || logWriter->getLevelPrint() <= level)
          {
             const auto datetime = vals.at(0).toDateTime();
             const auto threadId = vals.at(1).toString();
@@ -173,7 +185,7 @@ void QLoggerManager::enqueueMessage(const QString &module, LogLevel level, const
    const auto logWriter = mModuleDest.value(module, nullptr);
    const auto isLogEnabled = logWriter && logWriter->getMode() != LogMode::Disabled && !logWriter->isStop();
 
-   if (isLogEnabled && logWriter->getLevel() <= level)
+   if (isLogEnabled && (logWriter->getLevel() <= level || logWriter->getLevelPrint() <= level))
    {
       const auto threadId = QString("%1").arg((quintptr)QThread::currentThread(), QT_POINTER_SIZE * 2, 16, QChar('0'));
       const auto fileName = file.mid(file.lastIndexOf('/') + 1);
@@ -229,8 +241,10 @@ void QLoggerManager::overwriteLogLevel(LogLevel level)
 
    setDefaultLevel(level);
 
-   for (auto &logWriter : mModuleDest)
+   for (auto &logWriter : mModuleDest) {
       logWriter->setLogLevel(level);
+      logWriter->setLogLevelPrint(level);
+   }
 }
 
 void QLoggerManager::overwriteMaxFileSize(int maxSize)
