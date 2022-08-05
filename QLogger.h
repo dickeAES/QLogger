@@ -46,7 +46,7 @@ public:
    static QLoggerManager *getInstance();
 
    /**
-    * @brief This method creates a QLoogerWriter that stores the name of the file and the log
+    * @brief This method creates a QLoggerWriter that stores the name of the file and the log
     * level assigned to it. Here is added to the map the different modules assigned to each
     * log file. The method returns <em>false</em> if a module is configured to be stored in
     * more than one file.
@@ -65,7 +65,7 @@ public:
                        LogFileDisplay fileSuffixIfFull = LogFileDisplay::DateTime,
                        LogMessageDisplays messageOptions = LogMessageDisplay::Default, bool notify = true);
    /**
-    * @brief This method creates a QLoogerWriter that stores the name of the file and the log
+    * @brief This method creates a QLoggerWriter that stores the name of the file and the log
     * level assigned to it. Here is added to the map the different modules assigned to each
     * log file. The method returns <em>false</em> if a module is configured to be stored in
     * more than one file.
