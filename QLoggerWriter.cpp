@@ -4,7 +4,9 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDir>
-#include <QDebug>
+//#include <QDebug>
+
+#include <iostream>
 
 namespace
 {
@@ -133,7 +135,7 @@ void QLoggerWriter::write(QVector<QString> messages)
    if (mMode == LogMode::OnlyConsole)
    {
       for (const auto &message : messages)
-         qInfo() << message;
+         std::cout << message.toStdString() << std::endl;
 
       return;
    }
@@ -155,7 +157,7 @@ void QLoggerWriter::write(QVector<QString> messages)
          out << message;
 
          if (mMode == LogMode::Full)
-            qInfo() << message;
+            std::cout << message.toStdString() << std::endl;
       }
 
       file.close();
@@ -165,7 +167,7 @@ void QLoggerWriter::write(QVector<QString> messages)
 void QLoggerWriter::printToConsole(QVector<QString> messages) {
     if(mMode != LogMode::OnlyFile) {
         for (const auto &message : messages)
-           qInfo() << message;
+           std::cout << message.toStdString() << std::endl;
 
         return;
     }
