@@ -211,7 +211,7 @@ void QLoggerWriter::enqueue(const QDateTime &date, const QString &threadId, cons
          text.append(QString("[%1]").arg(module));
 
       if (mMessageOptions.testFlag(LogMessageDisplay::DateTime))
-         text.append(QString("[%1]").arg(date.toSecsSinceEpoch()));
+         text.append(QString("[%1]").arg(date.toString("dd.MM.yy hh:mm:ss")));
 
       if (mMessageOptions.testFlag(LogMessageDisplay::ThreadId))
          text.append(QString("[%1]").arg(threadId));
